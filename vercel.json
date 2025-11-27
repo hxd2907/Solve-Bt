@@ -1,7 +1,9 @@
 {
-  "buildCommand": "npm run build",
+  "version": 2,
+  "buildCommand": "npm install && npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "installCommand": "npm install",
   "rewrites": [
     {
       "source": "/(.*)",
@@ -18,5 +20,8 @@
         }
       ]
     }
-  ]
+  ],
+  "env": {
+    "NODE_VERSION": "18"
+  }
 }
