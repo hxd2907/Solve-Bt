@@ -1,0 +1,14 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+export const genAI = new GoogleGenerativeAI(apiKey);
+
+export const getModel = (modelName: string = "gemini-2.5-flash") => {
+  return genAI.getGenerativeModel({ model: modelName });
+};
+
+export async function solveProblem(prompt: string) {
+  const model = getModel();
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+}
