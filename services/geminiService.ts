@@ -1,100 +1,67 @@
-import { GoogleGenAI, Type } from "@google/genai";
-import { Language, SolutionResult } from '../types';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { Language, SolutionResult, TestCase } from '../types';
 
-const cleanBase64 = (dataUrl: string): string => {
-  // Removes "data:image/png;base64," or "data:application/pdf;base64," prefix
-  return dataUrl.split(',')[1];
-};
+// ✅ Đọc API key từ environment variable
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || process.env.API_KEY;
 
-export const solveProblem = async (
-  base64Data: string,
+if (!API_KEY) {
+  throw new Error('GEMINI_API_KEY is not configured. Please set it in Vercel environment variables.');
+}
+
+const genAI = new GoogleGenerativeAI(API_KEY);
+
+export async function solveProblem(
+  imageDataBase64: string,
   mimeType: string,
   language: Language
-): Promise<SolutionResult> => {
+): Promise<SolutionResult> {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    
-    const prompt = `
-      Bạn là một chuyên gia lập trình thi đấu và giáo viên tin học giỏi. 
-      Nhiệm vụ của bạn là giải bài tập tin học có trong file đính kèm.
-      
-      Yêu cầu cụ thể:
-      1. Phân tích đề bài ngắn gọn.
-      2. Trình bày thuật toán hoặc ý tưởng giải quyết.
-      3. Viết code hoàn chỉnh, tối ưu bằng ngôn ngữ ${language}. Code phải CHÍNH XÁC, không chứa markdown, không chứa chú thích thừa bên ngoài hàm.
-      4. Tạo ra chính xác 20 bộ test case (Input và Output tương ứng) để kiểm tra tính đúng đắn của chương trình. Các test case phải bao gồm các trường hợp biên (edge cases), trường hợp nhỏ và trường hợp lớn.
-      
-      Hãy trả về kết quả dưới dạng JSON tuân thủ schema được cung cấp.
-    `;
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              mimeType: mimeType,
-              data: cleanBase64(base64Data)
-            }
-          },
-          {
-            text: prompt
-          }
-        ]
+    const prompt = `Bạn là một chuyên gia lập trình. Phân tích bài tập trong ảnh/PDF và:
+
+1. Giải thích chi tiết bài toán bằng tiếng Việt
+2. Viết code ${language} hoàn chỉnh và tối ưu
+3. Tạo 20 test cases (10 basic, 5 edge cases, 5 stress tests)
+
+Format trả về JSON:
+{
+  "markdown": "# Phân tích bài toán\\n\\n...",
+  "rawCode": "code không có markdown backticks",
+  "testCases": [
+    {"input": "...", "output": "..."}
+  ]
+}`;
+
+    const result = await model.generateContent([
+      {
+        inlineData: {
+          data: imageDataBase64,
+          mimeType: mimeType
+        }
       },
-      config: {
-        // Using structured output to ensure clean code and parsed test cases
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            explanation: {
-              type: Type.STRING,
-              description: "Phân tích đề bài và giải thích thuật toán (định dạng Markdown)",
-            },
-            sourceCode: {
-              type: Type.STRING,
-              description: `Mã nguồn hoàn chỉnh bằng ${language}. Chỉ chứa code, không chứa markdown blocks (như \`\`\`cpp).`,
-            },
-            testCases: {
-              type: Type.ARRAY,
-              description: "Danh sách 20 bộ test case",
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  input: { type: Type.STRING, description: "Dữ liệu đầu vào (Input)" },
-                  output: { type: Type.STRING, description: "Kết quả mong đợi (Output)" }
-                },
-                required: ["input", "output"]
-              }
-            }
-          },
-          required: ["explanation", "sourceCode", "testCases"]
-        },
-        thinkingConfig: { thinkingBudget: 2048 }, // Increased budget for generating many test cases
-        temperature: 0.2,
-      }
-    });
+      prompt
+    ]);
 
-    const resultText = response.text || "{}";
-    const parsedResult = JSON.parse(resultText);
+    const response = await result.response;
+    const text = response.text();
+    
+    // Parse JSON từ response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Không thể parse response từ Gemini');
+    }
 
-    // Provide fallback if the model fails to return the exact structure (rare with schema)
-    const markdown = parsedResult.explanation || "Không có lời giải thích.";
-    let rawCode = parsedResult.sourceCode || "";
-    const testCases = parsedResult.testCases || [];
-
-    // Extra cleanup just in case the model put markdown fences inside the JSON string
-    rawCode = rawCode.replace(/^```[a-z]*\n/i, '').replace(/```$/i, '').trim();
-
+    const parsed = JSON.parse(jsonMatch[0]);
+    
     return {
-      markdown,
-      rawCode,
-      testCases
+      markdown: parsed.markdown || '',
+      rawCode: parsed.rawCode || '',
+      testCases: parsed.testCases || []
     };
 
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw new Error("Có lỗi xảy ra khi xử lý bài tập. Vui lòng thử lại.");
+  } catch (error: any) {
+    console.error('Gemini API Error:', error);
+    throw new Error(error.message || 'Lỗi khi gọi Gemini API');
   }
-};
+}
