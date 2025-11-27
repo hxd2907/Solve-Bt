@@ -1,0 +1,18 @@
+{
+  "name": "CodeSolver AI - Giải Bài Tập",
+  "short_name": "CodeSolver",
+  "description": "Giải bài tập lập trình tự động với AI",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3854/3854859.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
