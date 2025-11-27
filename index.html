@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CodeSolver AI</title>
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiQ29kZVNvbHZlciBBSSAtIEdp4bqjaSBCw6BpIFThuq9wIiwic2hvcnRfbmFtZSI6IkNvZGVTb2x2ZXIiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBmMTcyYSIsInRoZW1lX2NvbG9yIjoiIzBmMTcyYSIsImljb25zIjpbeyJzcmMiOiJodHRwczovL2Nkbi1pY29ucy1wbmcuZmxhdGljb24uY29tLzUxMi8zODU0LzM4NTQ4NTkucG5nIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3BuZyJ9XX0=" />
-    <meta name="theme-color" content="#0f172a">
+    <title>CodeSolver AI - Giải Bài Tập</title>
     
-    <!-- Using Tailwind CDN for simplicity in this setup, though npm install is better for large projs -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Giải bài tập lập trình tự động với AI">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
       tailwind.config = {
@@ -33,6 +37,7 @@
         }
       }
     </script>
+    
     <style>
       body {
         background-color: #0f172a;
@@ -54,24 +59,9 @@
         background: #64748b; 
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "vite": "https://aistudiocdn.com/vite@^7.2.4",
-    "jszip": "https://aistudiocdn.com/jszip@^3.10.1",
-    "docx": "https://aistudiocdn.com/docx@^9.5.1"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
