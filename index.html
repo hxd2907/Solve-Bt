@@ -3,18 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CodeSolver AI - Giải Bài Tập</title>
+    <title>CodeSolver AI</title>
     
-    <!-- PWA Meta Tags -->
     <meta name="description" content="Giải bài tập lập trình tự động với AI">
     <meta name="theme-color" content="#0f172a">
     
-    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
       tailwind.config = {
         theme: {
@@ -41,6 +39,8 @@
       body {
         background-color: #0f172a;
         color: #f8fafc;
+        margin: 0;
+        padding: 0;
       }
       ::-webkit-scrollbar {
         width: 8px;
@@ -63,27 +63,3 @@
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
-```
-
-### **Bước 3: Xác nhận cấu trúc file**
-
-Kiểm tra xem file `index.tsx` của bạn ở đâu:
-
-**Trường hợp A:** Nếu ở root (cùng cấp với `index.html`):
-```
-project/
-├── index.html
-├── index.tsx     ← Ở đây
-├── App.tsx
-└── package.json
-```
-→ Giữ nguyên: `<script type="module" src="/index.tsx"></script>`
-
-**Trường hợp B:** Nếu trong thư mục `src/`:
-```
-project/
-├── index.html
-├── src/
-│   ├── index.tsx     ← Ở đây
-│   └── App.tsx
-└── package.json
