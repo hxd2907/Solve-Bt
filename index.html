@@ -8,7 +8,6 @@
     <!-- PWA Meta Tags -->
     <meta name="description" content="Giải bài tập lập trình tự động với AI">
     <meta name="theme-color" content="#0f172a">
-    <link rel="manifest" href="/manifest.json" />
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -43,7 +42,6 @@
         background-color: #0f172a;
         color: #f8fafc;
       }
-      /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -65,3 +63,27 @@
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
+```
+
+### **Bước 3: Xác nhận cấu trúc file**
+
+Kiểm tra xem file `index.tsx` của bạn ở đâu:
+
+**Trường hợp A:** Nếu ở root (cùng cấp với `index.html`):
+```
+project/
+├── index.html
+├── index.tsx     ← Ở đây
+├── App.tsx
+└── package.json
+```
+→ Giữ nguyên: `<script type="module" src="/index.tsx"></script>`
+
+**Trường hợp B:** Nếu trong thư mục `src/`:
+```
+project/
+├── index.html
+├── src/
+│   ├── index.tsx     ← Ở đây
+│   └── App.tsx
+└── package.json
